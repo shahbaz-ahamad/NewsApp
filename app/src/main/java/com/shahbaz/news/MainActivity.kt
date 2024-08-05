@@ -18,6 +18,7 @@ import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.lifecycleScope
 import androidx.paging.map
+import com.shahbaz.news.bottomnavigaton.BottomNavigationBar
 import com.shahbaz.news.navigation.NavigationGraph
 import com.shahbaz.news.presentation.homeviewmodel.HomeViewmodel
 import com.shahbaz.news.presentation.onbaordingscreen.OnBoardingScreen
@@ -48,7 +49,9 @@ class MainActivity : ComponentActivity() {
         }
         setContent {
             NewsTheme {
-                Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
+                Scaffold(
+                    modifier = Modifier.fillMaxSize(),
+                ) { innerPadding ->
                     NavigationGraph(
                         modifier = Modifier.padding(innerPadding),
                         startRoute = onBoardingViewModel.startDestination.value

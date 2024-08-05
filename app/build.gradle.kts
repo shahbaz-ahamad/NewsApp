@@ -94,6 +94,8 @@ dependencies {
     //Coil
     implementation(libs.coil.compose)
 
+    //bottomnavigation
+    implementation(libs.androidx.material)
 }
 
 // Allow references to generated code

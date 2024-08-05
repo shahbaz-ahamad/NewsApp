@@ -1,6 +1,9 @@
 package com.shahbaz.news.presentation.AppScreen
 
+import android.widget.Toast
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.basicMarquee
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -25,6 +28,9 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.SearchBar
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.derivedStateOf
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -36,22 +42,45 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.navigation.NavHostController
+import androidx.paging.LoadState
 import androidx.paging.compose.collectAsLazyPagingItems
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.shahbaz.news.R
 import com.shahbaz.news.datamodel.Article
 import com.shahbaz.news.datamodel.Source
+import com.shahbaz.news.navigation.Route
 import com.shahbaz.news.presentation.homeviewmodel.HomeViewmodel
+import java.net.ConnectException
 
 
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun HomeScreen(
     modifier: Modifier = Modifier,
-    homeViewmodel: HomeViewmodel = hiltViewModel()
+    homeViewmodel: HomeViewmodel = hiltViewModel(),
+    navHostController: NavHostController
 ) {
+    val context = LocalContext.current
     val response = homeViewmodel.newsList.collectAsLazyPagingItems()
+
+    val titles by remember {
+        derivedStateOf {
+            if (response.itemCount > 10) {
+                response.itemSnapshotList.items
+                    .slice(IntRange(start = 0, endInclusive = 9))
+                    .joinToString(separator = " \uD83D\uDFE5 ") {
+                        it.title
+                    }
+
+            } else {
+                ""
+            }
+        }
+    }
 
     Column(
         modifier = Modifier
@@ -70,23 +99,45 @@ fun HomeScreen(
 
         Spacer(modifier = Modifier.height(24.dp))
 
-        LazyColumn(
-            modifier = modifier.fillMaxSize()
-        ) {
-            items(response.itemCount) {
-                response[it]?.let { article ->
-                    ArticleCard(
-                        modifier = Modifier.padding(
-                            horizontal = 24.dp,
-                            vertical = 10.dp
-                        ),
-                        article = article
-                    ) {
-                        //perform onclick
+        Text(
+            text = titles, modifier = Modifier
+                .fillMaxWidth()
+                .padding(start = 24.dp)
+                .basicMarquee(), fontSize = 12.sp,
+            color = colorResource(id = R.color.placeholder)
+        )
+
+        Spacer(modifier = Modifier.height(24.dp))
+
+        when {
+            response.loadState.refresh is LoadState.Loading -> {
+                ShimmerList()
+            }
+            response.loadState.refresh is LoadState.Error ->{
+                Toast.makeText(context,"Error",Toast.LENGTH_SHORT).show()
+            }
+            else -> {
+                LazyColumn(
+                    modifier = modifier.fillMaxSize()
+                ) {
+                    items(response.itemCount) {
+                        response[it]?.let { article ->
+                            ArticleCard(
+                                modifier = Modifier.padding(
+                                    horizontal = 24.dp,
+                                    vertical = 10.dp
+                                ),
+                                article = article,
+                                onClick = {
+
+                                }
+                            )
+                        }
                     }
                 }
             }
         }
+
     }
 
 }
@@ -119,7 +170,7 @@ fun ArticleCard(
         Column(
             verticalArrangement = Arrangement.SpaceAround,
             modifier = Modifier
-                .padding(horizontal = 3.dp)
+                .padding(horizontal = 10.dp)
                 .height(100.dp)
         ) {
             Text(
@@ -151,7 +202,9 @@ fun ArticleCard(
                 Text(
                     text = article.publishedAt,
                     style = MaterialTheme.typography.labelSmall,
-                    color = colorResource(id = R.color.body)
+                    color = colorResource(id = R.color.body),
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis
                 )
             }
         }
@@ -175,5 +228,19 @@ private fun ArticlePreview() {
         )
     ) {
 
+    }
+}
+
+@Composable
+fun ShimmerList() {
+    LazyColumn {
+        items(10) {
+            ArticleCardShimmerEffect(
+                modifier = Modifier.padding(
+                    horizontal = 24.dp,
+                    vertical = 10.dp
+                )
+            )
+        }
     }
 }
