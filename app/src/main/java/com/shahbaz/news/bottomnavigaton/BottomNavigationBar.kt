@@ -1,6 +1,7 @@
 package com.shahbaz.news.bottomnavigaton
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.height
@@ -62,11 +63,14 @@ fun BottomNavigationBar(
 
                 },
                 icon = {
-
                     Column(
                         horizontalAlignment = Alignment.CenterHorizontally
                     ) {
-                        Icon(painter = painterResource(id = screen.icon), contentDescription = null)
+                        Icon(
+                            painter = painterResource(id = screen.icon),
+                            contentDescription = null,
+                            tint = if(isSystemInDarkTheme()) Color.White else Color.Black
+                            )
                         Spacer(modifier = Modifier.height(8.dp))
                         Text(
                             text = screen.title,
@@ -74,7 +78,8 @@ fun BottomNavigationBar(
                         )
                     }
 
-                }
+                },
+
             )
         }
     }

@@ -1,5 +1,9 @@
 package com.shahbaz.news.navigation
 
+import com.shahbaz.news.datamodel.Article
+
+
+
 sealed class Route(
     val route: String
 ) {

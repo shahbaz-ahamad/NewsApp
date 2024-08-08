@@ -54,10 +54,11 @@ import com.shahbaz.news.datamodel.Article
 import com.shahbaz.news.datamodel.Source
 import com.shahbaz.news.navigation.Route
 import com.shahbaz.news.presentation.homeviewmodel.HomeViewmodel
+import com.shahbaz.news.util.Constant.ARTICEL_ARGUMENT
 import java.net.ConnectException
 
 
-@OptIn(ExperimentalFoundationApi::class)
+@OptIn(ExperimentalFoundationApi::class, ExperimentalMaterial3Api::class)
 @Composable
 fun HomeScreen(
     modifier: Modifier = Modifier,
@@ -85,7 +86,6 @@ fun HomeScreen(
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .padding(top = 24.dp)
             .statusBarsPadding()
     ) {
         Image(
@@ -96,9 +96,7 @@ fun HomeScreen(
                 .height(30.dp)
                 .padding(horizontal = 24.dp)
         )
-
         Spacer(modifier = Modifier.height(24.dp))
-
         Text(
             text = titles, modifier = Modifier
                 .fillMaxWidth()
@@ -113,9 +111,11 @@ fun HomeScreen(
             response.loadState.refresh is LoadState.Loading -> {
                 ShimmerList()
             }
-            response.loadState.refresh is LoadState.Error ->{
-                Toast.makeText(context,"Error",Toast.LENGTH_SHORT).show()
+
+            response.loadState.refresh is LoadState.Error -> {
+                Toast.makeText(context, "Error", Toast.LENGTH_SHORT).show()
             }
+
             else -> {
                 LazyColumn(
                     modifier = modifier.fillMaxSize()
@@ -130,6 +130,12 @@ fun HomeScreen(
                                 article = article,
                                 onClick = {
 
+                                    //this is the one of the simple way of passing parcelable among the screen
+                                    navHostController.currentBackStackEntry?.savedStateHandle?.set(
+                                        key = ARTICEL_ARGUMENT,
+                                        value = article
+                                    )
+                                    navHostController.navigate(Route.DetailsScreen.route)
                                 }
                             )
                         }
@@ -155,7 +161,7 @@ fun ArticleCard(
         modifier = modifier
             .fillMaxWidth()
             .clickable {
-
+                onClick()
             }
     ) {
         AsyncImage(
