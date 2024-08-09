@@ -4,6 +4,7 @@ import android.content.Intent
 import android.content.res.Configuration.UI_MODE_NIGHT_YES
 import android.net.Uri
 import android.util.Log
+import android.widget.Toast
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -23,6 +24,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import coil.compose.AsyncImage
@@ -30,19 +32,26 @@ import coil.request.ImageRequest
 import com.shahbaz.news.R
 import com.shahbaz.news.datamodel.Article
 import com.shahbaz.news.datamodel.Source
+import com.shahbaz.news.presentation.bookmarkviewmodel.BookMarkViewmodel
 
 @Composable
 fun DetailScreen(
     article: Article, navController: NavController
 ) {
     val context = LocalContext.current
+    val bookMarkViewmodel:BookMarkViewmodel = hiltViewModel()
+
     Column(
         modifier = Modifier.fillMaxSize()
     ) {
 
         DetailScreenTopBar(
             onBackClick = { navController.navigateUp() },
-            onBookMarkClick = { },
+            onBookMarkClick = {
+                bookMarkViewmodel.inertNews(article)
+                Toast.makeText(context,"Data Saved",Toast.LENGTH_SHORT).show()
+                Log.d("Data inserted","yes")
+            },
             onShareClick = {
                 Intent(
                     Intent.ACTION_SEND

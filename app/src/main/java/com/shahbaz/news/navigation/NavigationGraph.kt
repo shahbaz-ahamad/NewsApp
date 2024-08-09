@@ -25,6 +25,7 @@ import com.shahbaz.news.bottomnavigaton.BottomNavigationBar
 import com.shahbaz.news.bottomnavigaton.bottomNavigationItem
 import com.shahbaz.news.datamodel.Article
 import com.shahbaz.news.datamodel.Source
+import com.shahbaz.news.presentation.AppScreen.BookMarkScreen
 import com.shahbaz.news.presentation.AppScreen.HomeScreen
 import com.shahbaz.news.presentation.AppScreen.detailsscreen.DetailScreen
 import com.shahbaz.news.presentation.onbaordingscreen.OnBoardingScreen
@@ -88,7 +89,7 @@ fun NavigationGraph(
                 composable(
                     route = Route.BookmarkScreen.route
                 ) {
-
+                        BookMarkScreen(navController = navController)
                 }
 
                 composable(

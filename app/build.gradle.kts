@@ -97,6 +97,11 @@ dependencies {
 
     //bottomnavigation
     implementation(libs.androidx.material)
+
+    //room databse
+    implementation(libs.androidx.room.runtime)
+    kapt(libs.androidx.room.compiler)
+    implementation(libs.androidx.room.ktx)
 }
 
 // Allow references to generated code
